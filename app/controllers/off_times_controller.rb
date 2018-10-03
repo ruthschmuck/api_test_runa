@@ -11,7 +11,7 @@ class OffTimesController < ApplicationController
   end
 
   def create
-    user = User.first
+    user = User.first #aqui va el current user cuando se loguee
     @off = user.off_times.create!(off_params)
     json_response(@off, :created)
   end

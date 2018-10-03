@@ -5,10 +5,10 @@ RSpec.describe 'Entry Times API', type: :request do
   let!(:entry_times) { create_list(:entry_time, 10, user: user) }
   let(:entry_time_id) { entry_times.first.id }
 
-  # Test suite for GET /entry_times
-  describe 'GET /entry_times' do
+  # Test suite for GET /users/:user_id/entry_times
+  describe 'GET /users/:user_id/entry_times' do
     # make HTTP get request before each example
-    before { get '/entry_times' }
+    before { get '/users/:user_id/entry_times' }
 
     it 'return entry times' do
       expect(JSON.parse(response.body)).not_to be_empty
@@ -20,9 +20,9 @@ RSpec.describe 'Entry Times API', type: :request do
     end
   end
 
-  # Test suite for GET /entry_times/:id
-  describe 'GET /entry_times/:id' do
-    before { get "/entry_times/#{entry_time_id}" }
+  # Test suite for GET /users/:user_id/entry_times/:id
+  describe 'GET /users/:user_id/entry_times/:id' do
+    before { get "/users/:user_id/entry_times/#{entry_time_id}" }
 
     context 'when the record exists' do
       it 'returns the entry' do
@@ -48,12 +48,12 @@ RSpec.describe 'Entry Times API', type: :request do
     end
   end
 
-  # Test suite for POST /entry_times
-  describe 'POST /entry_times' do
+  # Test suite for POST /users/:user_id/entry_times
+  describe 'POST /users/:user_id/entry_times' do
     let(:valid_attributes) { { recordEntry: '07:30:00' } }
 
     context 'when the request is valid' do
-      before { post '/entry_times', params: valid_attributes }
+      before { post '/users/:user_id/entry_times', params: valid_attributes }
 
       it 'create a entry time' do
         expect(JSON.parse(response.body)['recordEntry']).to eq('07:30:00')
@@ -65,7 +65,7 @@ RSpec.describe 'Entry Times API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before { post '/entry_times', params: { recordEntry: '' } }
+      before { post '/users/:user_id/entry_times', params: { recordEntry: '' } }
 
       it 'returns status code 422' do
         expect(response).to have_http_status(422)
@@ -78,12 +78,12 @@ RSpec.describe 'Entry Times API', type: :request do
     end
   end
 
-  # Test suite for PUT /entry_times/:id
-  describe 'PUT /entry_times/:id' do
+  # Test suite for PUT /users/:user_id/entry_times/:id
+  describe 'PUT /users/:user_id/entry_times/:id' do
     let(:valid_attributes) { { recordEntry: '07:30:00' } }
 
     context 'when record exists' do
-      before { put "/entry_times/#{entry_time_id}", params: valid_attributes }
+      before { put "/users/:user_id/entry_times/#{entry_time_id}", params: valid_attributes }
 
       it 'updates record' do
         expect(response.body).to be_empty
@@ -97,7 +97,7 @@ RSpec.describe 'Entry Times API', type: :request do
     context 'when record does not exists' do
       let(:entry_time_id) { 100 }
 
-      before { put "/entry_times/#{entry_time_id}", params: valid_attributes }
+      before { put "/users/:user_id/entry_times/#{entry_time_id}", params: valid_attributes }
 
       it 'returns status code 404' do
         expect(response).to have_http_status(404)
@@ -122,10 +122,10 @@ RSpec.describe 'Entry Times API', type: :request do
     # end
   end
 
-  # Test suite for DELETE /entry_times/:id
-  describe 'DELETE /entry_times/:id' do
+  # Test suite for DELETE /users/:user_id/entry_times/:id
+  describe 'DELETE /users/:user_id/entry_times/:id' do
     context 'when record exists' do
-      before { delete "/entry_times/#{entry_time_id}" }
+      before { delete "/users/:user_id/entry_times/#{entry_time_id}" }
       it 'returns status code 204' do
         expect(response).to have_http_status(204)
       end
