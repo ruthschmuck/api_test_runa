@@ -8,7 +8,7 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.string :docId
       t.string :phone
       t.string :address
-      t.boolean :admin
+      t.integer :admin, default: 0
 
       t.timestamps
     end

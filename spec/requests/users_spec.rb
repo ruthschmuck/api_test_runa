@@ -56,7 +56,7 @@ RSpec.describe 'Users API', type: :request do
         docId: Faker::IDNumber.spanish_citizen_number,
         phone: Faker::PhoneNumber.cell_phone,
         address: Faker::Address.full_address,
-        admin: true }
+        admin: 'true' }
     end
 
     context 'when the request is valid' do
@@ -80,7 +80,7 @@ RSpec.describe 'Users API', type: :request do
                                  docId: Faker::IDNumber.spanish_citizen_number,
                                  phone: Faker::PhoneNumber.cell_phone,
                                  address: Faker::Address.full_address,
-                                 admin: true }
+                                 admin: 'true' }
       end
 
       it 'should return status code 422' do
@@ -104,7 +104,7 @@ RSpec.describe 'Users API', type: :request do
         docId: Faker::IDNumber.spanish_citizen_number,
         phone: Faker::PhoneNumber.cell_phone,
         address: Faker::Address.full_address,
-        admin: true }
+        admin: 'true' }
     end
 
     context 'when reord exist' do

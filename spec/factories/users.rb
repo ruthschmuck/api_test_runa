@@ -7,6 +7,6 @@ FactoryBot.define do
     docId { Faker::IDNumber.spanish_citizen_number }
     phone { Faker::PhoneNumber.cell_phone }
     address { Faker::Address.full_address }
-    admin { true }
+    admin { 0 }
   end
 end

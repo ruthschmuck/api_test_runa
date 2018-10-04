@@ -39,7 +39,7 @@ ActiveRecord::Schema.define(version: 20181002233046) do
     t.string "docId"
     t.string "phone"
     t.string "address"
-    t.boolean "admin"
+    t.integer "admin", default: 0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
