@@ -33,7 +33,7 @@ class UsersController < ApplicationController
 
   def user_params
     params.permit(:email,
-                  :password_digest,
+                  :password,
                   :name,
                   :lastName,
                   :docId,

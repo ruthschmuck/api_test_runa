@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :user do
     email { Faker::Internet.unique.email }
-    password_digest { Faker::Internet.password }
+    password { Faker::Internet.password }
     name { Faker::Name.first_name }
     lastName { Faker::Name.last_name }
     docId { Faker::IDNumber.spanish_citizen_number }

@@ -3,10 +3,12 @@ require 'rails_helper'
 RSpec.describe 'Users API', type: :request do
   let!(:users) { create_list(:user, 10) }
   let(:user_id) { users.first.id }
+  let!(:user) { users.first }
+  let(:headers) { valid_headers }
 
   # test suite for GET /users
   describe 'GET /users' do
-    before { get '/users' }
+    before { get '/users', params: {}, headers: headers }
 
     it 'should return users' do
       expect(JSON.parse(response.body)).not_to be_empty
@@ -20,7 +22,7 @@ RSpec.describe 'Users API', type: :request do
 
   # Test suite for GET /users/:id
   describe 'GET /users/:id' do
-    before { get "/users/#{user_id}" }
+    before { get "/users/#{user_id}", params: {}, headers: headers }
 
     context 'when the record exist' do
       it 'should return the off' do
@@ -50,17 +52,17 @@ RSpec.describe 'Users API', type: :request do
   describe 'POST /users' do
     let(:valid_attributes) do
       { email: 'myemail@mail.com',
-        password_digest: Faker::Internet.password,
+        password: Faker::Internet.password,
         name: Faker::Name.first_name,
         lastName: Faker::Name.first_name,
         docId: Faker::IDNumber.spanish_citizen_number,
         phone: Faker::PhoneNumber.cell_phone,
         address: Faker::Address.full_address,
-        admin: 'true' }
+        admin: 'true' }.to_json
     end
 
     context 'when the request is valid' do
-      before { post '/users', params: valid_attributes }
+      before { post '/users', params: valid_attributes, headers: headers }
 
       it 'should create a off time' do
         expect(JSON.parse(response.body)['email']).to eq('myemail@mail.com')
@@ -72,16 +74,18 @@ RSpec.describe 'Users API', type: :request do
     end
 
     context 'when the request is invalid' do
-      before do
-        post '/users', params: { email: ' ',
-                                 password_digest: Faker::Internet.password,
-                                 name: Faker::Name.first_name,
-                                 lastName: Faker::Name.first_name,
-                                 docId: Faker::IDNumber.spanish_citizen_number,
-                                 phone: Faker::PhoneNumber.cell_phone,
-                                 address: Faker::Address.full_address,
-                                 admin: 'true' }
+      let(:invalid_attributes) do
+        { email: ' ',
+          password: Faker::Internet.password,
+          name: Faker::Name.first_name,
+          lastName: Faker::Name.first_name,
+          docId: Faker::IDNumber.spanish_citizen_number,
+          phone: Faker::PhoneNumber.cell_phone,
+          address: Faker::Address.full_address,
+          admin: 'true' }.to_json
       end
+
+      before { post '/users', params: invalid_attributes, headers: headers }
 
       it 'should return status code 422' do
         expect(response).to have_http_status(422)
@@ -104,11 +108,13 @@ RSpec.describe 'Users API', type: :request do
         docId: Faker::IDNumber.spanish_citizen_number,
         phone: Faker::PhoneNumber.cell_phone,
         address: Faker::Address.full_address,
-        admin: 'true' }
+        admin: 'true' }.to_json
     end
 
     context 'when reord exist' do
-      before { put "/users/#{user_id}", params: valid_attributes }
+      before do
+        put "/users/#{user_id}", params: valid_attributes, headers: headers
+      end
 
       it 'should update record' do
         expect(response.body).to be_empty
@@ -122,7 +128,9 @@ RSpec.describe 'Users API', type: :request do
     context ' when record does not exist' do
       let(:user_id) { 100 }
 
-      before { put "/users/#{user_id}", params: valid_attributes }
+      before do
+        put "/users/#{user_id}", params: valid_attributes, headers: headers
+      end
 
       it 'should return status code 404' do
         expect(response).to have_http_status(404)
@@ -137,7 +145,8 @@ RSpec.describe 'Users API', type: :request do
   # Test suite for DELETE /users/:id
   describe 'DELETE /users/:id' do
     context 'when record exists' do
-      before { delete "/users/#{user_id}" }
+      before { delete "/users/#{user_id}", params: {}, headers: headers }
+
       it 'should returns status code 204' do
         expect(response).to have_http_status(204)
       end

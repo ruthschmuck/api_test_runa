@@ -1,8 +1,8 @@
 class EntryTimesController < ApplicationController
-  before_action :set_entry, only: [:show, :update, :destroy]
+  before_action :set_entry, only: %i[show update destroy]
 
   def index
-    @entries = EntryTime.all
+    @entries = current_user.entry_times.all
     json_response(@entries)
   end
 
@@ -11,8 +11,7 @@ class EntryTimesController < ApplicationController
   end
 
   def create
-    user = User.first
-    @entry = user.entry_times.create!(entry_params)
+    @entry = current_user.entry_times.create!(entry_params)
     json_response(@entry, :created)
   end
 

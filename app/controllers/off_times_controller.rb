@@ -1,8 +1,8 @@
 class OffTimesController < ApplicationController
-  before_action :set_off, only: [:show, :update, :destroy]
+  before_action :set_off, only: %i[show update destroy]
 
   def index
-    @offs = OffTime.all
+    @offs = current_user.off_times
     json_response(@offs)
   end
 
@@ -11,8 +11,7 @@ class OffTimesController < ApplicationController
   end
 
   def create
-    user = User.first #aqui va el current user cuando se loguee
-    @off = user.off_times.create!(off_params)
+    @off = current_user.off_times.create!(off_params)
     json_response(@off, :created)
   end
 
