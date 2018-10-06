@@ -8,8 +8,12 @@ RSpec.describe 'Employee Records API', type: :request do
   let(:headers) { valid_headers }
 
   # Test suit for GET /employee_records
-  describe 'GET /employee_records' do
-    before { get '/employee_records', params: {}, headers: headers }
+  describe 'GET /users/:user_id/employee_records' do
+    before do
+      get '/users/:user_id/employee_records',
+          params: {},
+          headers: headers
+    end
 
     it 'should return record list' do
       expect(JSON.parse(response.body)).not_to be_empty
