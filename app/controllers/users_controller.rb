@@ -2,27 +2,47 @@ class UsersController < ApplicationController
   before_action :set_user, only: %i[show update destroy]
 
   def index
-    @users = User.all
-    json_response(@users)
+    if is_admin?
+      @users = User.all
+      json_response(@users)
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def show
-    json_response(@user)
+    if is_admin?
+      json_response(@user)
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def create
-    @user = User.create!(user_params)
-    json_response(@user, :created)
+    if is_admin?
+      @user = User.create!(user_params)
+      json_response(@user, :created)
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def update
-    @user.update(user_params)
-    head :no_content
+    if is_admin?
+      @user.update(user_params)
+      head :no_content
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def destroy
-    @user.destroy
-    head :no_content
+    if is_admin?
+      @user.destroy
+      head :no_content
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   private
@@ -39,6 +59,6 @@ class UsersController < ApplicationController
                   :docId,
                   :phone,
                   :address,
-                  :admin)
+                  :is_admin)
   end
 end

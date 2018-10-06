@@ -8,26 +8,12 @@ RSpec.describe 'Users API', type: :request do
 
   # test suite for GET /users
   describe 'GET /users' do
-    before { get '/users', params: {}, headers: headers }
+    context 'when is admin' do
+      before { get '/users', params: {}, headers: headers }
 
-    it 'should return users' do
-      expect(JSON.parse(response.body)).not_to be_empty
-      expect(JSON.parse(response.body).size).to eq(10)
-    end
-
-    it 'should return status code 200' do
-      expect(response).to have_http_status(200)
-    end
-  end
-
-  # Test suite for GET /users/:id
-  describe 'GET /users/:id' do
-    before { get "/users/#{user_id}", params: {}, headers: headers }
-
-    context 'when the record exist' do
-      it 'should return the off' do
+      it 'should return users' do
         expect(JSON.parse(response.body)).not_to be_empty
-        expect(JSON.parse(response.body)['id']).to eq(user_id)
+        expect(JSON.parse(response.body).size).to eq(10)
       end
 
       it 'should return status code 200' do
@@ -35,15 +21,57 @@ RSpec.describe 'Users API', type: :request do
       end
     end
 
-    context 'when the record does not exist' do
-      let(:user_id) { 100 }
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
+      before do
+        get '/users',
+            params: {},
+            headers: headers
+      end
+      it 'should return status 422' do
+        expect(response).to have_http_status(422)
+      end
+    end
+  end
 
-      it 'should return status code 404' do
-        expect(response).to have_http_status(404)
+  # Test suite for GET /users/:id
+  describe 'GET /users/:id' do
+    before { get "/users/#{user_id}", params: {}, headers: headers }
+
+    context 'when is admin' do
+      context 'when the record exist' do
+        it 'should return the off' do
+          expect(JSON.parse(response.body)).not_to be_empty
+          expect(JSON.parse(response.body)['id']).to eq(user_id)
+        end
+
+        it 'should return status code 200' do
+          expect(response).to have_http_status(200)
+        end
       end
 
-      it 'should return a not found message' do
-        expect(response.body).to match("Couldn't find User")
+      context 'when the record does not exist' do
+        let(:user_id) { 100 }
+
+        it 'should return status code 404' do
+          expect(response).to have_http_status(404)
+        end
+
+        it 'should return a not found message' do
+          expect(response.body).to match("Couldn't find User")
+        end
+      end
+    end
+
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
+      before do
+        get "/users/#{user_id}",
+            params: {},
+            headers: headers
+      end
+      it 'should return status 422' do
+        expect(response).to have_http_status(422)
       end
     end
   end
@@ -61,39 +89,51 @@ RSpec.describe 'Users API', type: :request do
         admin: 'true' }.to_json
     end
 
-    context 'when the request is valid' do
-      before { post '/users', params: valid_attributes, headers: headers }
+    context 'when is admin'
+      context 'when the request is valid' do
+        before { post '/users', params: valid_attributes, headers: headers }
 
-      it 'should create a off time' do
-        expect(JSON.parse(response.body)['email']).to eq('myemail@mail.com')
+        it 'should create a off time' do
+          expect(JSON.parse(response.body)['email']).to eq('myemail@mail.com')
+        end
+
+        it 'should return status code 201' do
+          expect(response).to have_http_status(201)
+        end
       end
 
-      it 'should return status code 201' do
-        expect(response).to have_http_status(201)
+      context 'when the request is invalid' do
+        let(:invalid_attributes) do
+          { email: ' ',
+            password: Faker::Internet.password,
+            name: Faker::Name.first_name,
+            lastName: Faker::Name.first_name,
+            docId: Faker::IDNumber.spanish_citizen_number,
+            phone: Faker::PhoneNumber.cell_phone,
+            address: Faker::Address.full_address,
+            admin: 'true' }.to_json
+        end
+
+        before { post '/users', params: invalid_attributes, headers: headers }
+
+        it 'should return status code 422' do
+          expect(response).to have_http_status(422)
+        end
+
+        it 'should return a validation failure message' do
+          expect(response.body)
+            .to match("Validation failed: Email can't be blank")
+        end
       end
-    end
-
-    context 'when the request is invalid' do
-      let(:invalid_attributes) do
-        { email: ' ',
-          password: Faker::Internet.password,
-          name: Faker::Name.first_name,
-          lastName: Faker::Name.first_name,
-          docId: Faker::IDNumber.spanish_citizen_number,
-          phone: Faker::PhoneNumber.cell_phone,
-          address: Faker::Address.full_address,
-          admin: 'true' }.to_json
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
+      before do
+        post '/users',
+             params: {},
+             headers: headers
       end
-
-      before { post '/users', params: invalid_attributes, headers: headers }
-
-      it 'should return status code 422' do
+      it 'should return status 422' do
         expect(response).to have_http_status(422)
-      end
-
-      it 'should return a validation failure message' do
-        expect(response.body)
-          .to match("Validation failed: Email can't be blank")
       end
     end
   end
@@ -111,44 +151,71 @@ RSpec.describe 'Users API', type: :request do
         admin: 'true' }.to_json
     end
 
-    context 'when reord exist' do
-      before do
-        put "/users/#{user_id}", params: valid_attributes, headers: headers
+    context 'when is admin' do
+      context 'when reord exist' do
+        before do
+          put "/users/#{user_id}", params: valid_attributes, headers: headers
+        end
+
+        it 'should update record' do
+          expect(response.body).to be_empty
+        end
+
+        it 'should return status code 204' do
+          expect(response).to have_http_status(204)
+        end
       end
 
-      it 'should update record' do
-        expect(response.body).to be_empty
-      end
+      context ' when record does not exist' do
+        let(:user_id) { 100 }
 
-      it 'should return status code 204' do
-        expect(response).to have_http_status(204)
+        before do
+          put "/users/#{user_id}", params: valid_attributes, headers: headers
+        end
+
+        it 'should return status code 404' do
+          expect(response).to have_http_status(404)
+        end
+
+        it 'should return a not found message' do
+          expect(response.body).to match("Couldn't find User")
+        end
       end
     end
-
-    context ' when record does not exist' do
-      let(:user_id) { 100 }
-
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
       before do
-        put "/users/#{user_id}", params: valid_attributes, headers: headers
+        put "/users/#{user_id}",
+            params: {},
+            headers: headers
       end
-
-      it 'should return status code 404' do
-        expect(response).to have_http_status(404)
-      end
-
-      it 'should return a not found message' do
-        expect(response.body).to match("Couldn't find User")
+      it 'should return status 422' do
+        expect(response).to have_http_status(422)
       end
     end
   end
 
   # Test suite for DELETE /users/:id
   describe 'DELETE /users/:id' do
-    context 'when record exists' do
-      before { delete "/users/#{user_id}", params: {}, headers: headers }
+    context 'when is admin' do
+      context 'when record exists' do
+        before { delete "/users/#{user_id}", params: {}, headers: headers }
 
-      it 'should returns status code 204' do
-        expect(response).to have_http_status(204)
+        it 'should returns status code 204' do
+          expect(response).to have_http_status(204)
+        end
+      end
+    end
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
+      before do
+        post '/users',
+             params: {},
+             headers: headers
+      end
+
+      it 'should return status 422' do
+        expect(response).to have_http_status(422)
       end
     end
   end

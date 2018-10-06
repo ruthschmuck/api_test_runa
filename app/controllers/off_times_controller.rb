@@ -11,18 +11,31 @@ class OffTimesController < ApplicationController
   end
 
   def create
-    @off = current_user.off_times.create!(off_params)
-    json_response(@off, :created)
+    if is_admin?
+      @off = current_user.off_times.create!(off_params)
+      json_response(@off, :created)
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+
+    end
   end
 
   def update
-    @off.update(off_params)
-    head :no_content
+    if is_admin?
+      @off.update(off_params)
+      head :no_content
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def destroy
-    @off.destroy
-    head :no_content
+    if is_admin?
+      @off.destroy
+      head :no_content
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   private

@@ -6,6 +6,10 @@ class ApplicationController < ActionController::API
   before_action :authorize_request
   attr_reader :current_user
 
+  def is_admin?
+    @current_user.admin == 'true'
+  end
+
   private
 
   # Check for valid request token and return user

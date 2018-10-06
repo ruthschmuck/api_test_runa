@@ -4,4 +4,6 @@ Rails.application.routes.draw do
     resources :off_times
   end
   resources :employee_records, only: [:index]
+
+  post 'auth/login', to: 'authentication#authenticate'
 end

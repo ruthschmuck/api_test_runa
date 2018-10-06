@@ -31,26 +31,28 @@ RSpec.describe 'Entry Times API', type: :request do
           headers: headers
     end
 
-    context 'when the record exists' do
-      it 'returns the entry' do
-        expect(JSON.parse(response.body)).not_to be_empty
-        expect(JSON.parse(response.body)['id']).to eq(entry_time_id)
+    context 'when is admin' do
+      context 'when the record exists' do
+        it 'returns the entry' do
+          expect(JSON.parse(response.body)).not_to be_empty
+          expect(JSON.parse(response.body)['id']).to eq(entry_time_id)
+        end
+
+        it 'returns status code 200' do
+          expect(response).to have_http_status(200)
+        end
       end
 
-      it 'returns status code 200' do
-        expect(response).to have_http_status(200)
-      end
-    end
+      context 'when the record does not exist' do
+        let(:entry_time_id) { 100 }
 
-    context 'when the record does not exist' do
-      let(:entry_time_id) { 100 }
+        it 'returns status code 404' do
+          expect(response).to have_http_status(404)
+        end
 
-      it 'returns status code 404' do
-        expect(response).to have_http_status(404)
-      end
-
-      it 'returns a not found message' do
-        expect(response.body).to match("Couldn't find EntryTime")
+        it 'returns a not found message' do
+          expect(response.body).to match("Couldn't find EntryTime")
+        end
       end
     end
   end
@@ -94,71 +96,97 @@ RSpec.describe 'Entry Times API', type: :request do
           .to match("Validation failed: Recordentry can't be blank")
       end
     end
+
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
+      before do
+        post '/users/:user_id/entry_times',
+             params: valid_attributes,
+             headers: headers
+      end
+      it 'should return status 422 ' do
+        expect(response).to have_http_status(422)
+      end
+    end
   end
 
   # Test suite for PUT /users/:user_id/entry_times/:id
   describe 'PUT /users/:user_id/entry_times/:id' do
     let(:valid_attributes) { { recordEntry: '07:30:00' }.to_json }
 
-    context 'when record exists' do
-      before do
-        put "/users/:user_id/entry_times/#{entry_time_id}",
-            params: valid_attributes,
-            headers: headers
+    context 'when is admin' do
+      context 'when record exists' do
+        before do
+          put "/users/:user_id/entry_times/#{entry_time_id}",
+              params: valid_attributes,
+              headers: headers
+        end
+
+        it 'updates record' do
+          expect(response.body).to be_empty
+        end
+
+        it 'returns status code 204' do
+          expect(response).to have_http_status(204)
+        end
       end
 
-      it 'updates record' do
-        expect(response.body).to be_empty
-      end
+      context 'when record does not exists' do
+        let(:entry_time_id) { 100 }
 
-      it 'returns status code 204' do
-        expect(response).to have_http_status(204)
+        before do
+          put "/users/:user_id/entry_times/#{entry_time_id}",
+              params: valid_attributes,
+              headers: headers
+        end
+
+        it 'returns status code 404' do
+          expect(response).to have_http_status(404)
+        end
+
+        it 'returns a not found message' do
+          expect(response.body).to match("Couldn't find EntryTime")
+        end
       end
     end
 
-    context 'when record does not exists' do
-      let(:entry_time_id) { 100 }
-
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
       before do
         put "/users/:user_id/entry_times/#{entry_time_id}",
-            params: valid_attributes,
-            headers: headers
+             params: valid_attributes,
+             headers: headers
       end
-
-      it 'returns status code 404' do
-        expect(response).to have_http_status(404)
-      end
-
-      it 'returns a not found message' do
-        expect(response.body).to match("Couldn't find EntryTime")
+      it 'should return status 422 ' do
+        expect(response).to have_http_status(422)
       end
     end
-
-    # context 'when request is invalid' do
-    #   before { put "/entry_times/#{entry_time_id}", params: { recordEntry: '' } }
-
-    #   it 'returns status code 422' do
-    #     expect(response).to have_http_status(422)
-    #   end
-
-    #   it 'returns a validation failure message' do
-    #     expect(response.body)
-    #       .to match("Validation failed: Recordentry can't be blank")
-    #   end
-    # end
   end
 
   # Test suite for DELETE /users/:user_id/entry_times/:id
   describe 'DELETE /users/:user_id/entry_times/:id' do
-    context 'when record exists' do
+    context 'when is admin'
+      context 'when record exists' do
+        before do
+          delete "/users/:user_id/entry_times/#{entry_time_id}",
+                 params: {},
+                 headers: headers
+        end
+
+        it 'returns status code 204' do
+          expect(response).to have_http_status(204)
+        end
+      end
+
+    context 'when does not admin' do
+      let(:user) { create(:user_employee) }
       before do
         delete "/users/:user_id/entry_times/#{entry_time_id}",
                params: {},
                headers: headers
       end
-
-      it 'returns status code 204' do
-        expect(response).to have_http_status(204)
+      it 'should return status 422 ' do
+        expect(response).to have_http_status(422)
       end
     end
   end

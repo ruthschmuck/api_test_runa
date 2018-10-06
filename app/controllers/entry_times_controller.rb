@@ -7,22 +7,38 @@ class EntryTimesController < ApplicationController
   end
 
   def show
-    json_response(@entry)
+    if is_admin?
+      json_response(@entry)
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def create
-    @entry = current_user.entry_times.create!(entry_params)
-    json_response(@entry, :created)
+    if is_admin?
+      @entry = current_user.entry_times.create!(entry_params)
+      json_response(@entry, :created)
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def update
-    @entry.update(entry_params)
-    head :no_content
+    if is_admin?
+      @entry.update(entry_params)
+      head :no_content
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   def destroy
-    @entry.destroy
-    head :no_content
+    if is_admin?
+      @entry.destroy
+      head :no_content
+    else
+      json_response({ message: 'Dont have permision' }, :unprocessable_entity)
+    end
   end
 
   private
