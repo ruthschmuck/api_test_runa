@@ -1,6 +1,6 @@
 # Test Runa
 
-ruby version 2.5.1p57
+ruby version 2.5.1p57  
 rails version 5.1.3
 
 ----
@@ -23,8 +23,12 @@ GET /users/:user_id/off_times | Lista las horas de salida para un usuario | admi
 GET /users/:user_id/off_times/:id | Muestra una hora especifica de salida | admin/empleado
 POST /users/:user_id/off_times | Crea una hora de salida | admin
 PUT/PATCH /users/:user_id/off_times | Modifica una hora de salida | admin
-DELETE /PATCH /users/:user_id/off_times/:id | Elimina una hora de salida | admin
+DELETE /users/:user_id/off_times/:id | Elimina una hora de salida | admin
 GET /employee_records | Muestra un conjunto con la fecha y las horas de entrada | admin/empleado
+
+**Nota:** la ruta para cerrar sesión no existe. Se usó JWT como servicio para validar al usuario,
+este no provee un método para destruir el token, pero si un tiempo activo. Para este caso se uso un
+tiempo de expiración de 24 horas.
 
 ## Descripcion de los EndPoints
 ### POST /auth/login 
@@ -34,50 +38,57 @@ Genera un toquen de autenticidad.
 }
 ### GET /users
 Retorna
-[	
-	{
-		{
-			'id': '1'
-			'email': 'myemail1@mail.com',
-	        'name': 'Juan',
-	        'lastName': 'perez',
-		    'docId': 'v-1234456',
-	        'phone': '123-456-789',
-	        'address': 'my direccion'
-		}
-		{
-			'id': '2'
-			'email': 'myemail2@mail.com',
-	        'name': 'Pedro',
-	        'lastName': 'Rodriguez',
-		    'docId': 'v-987653',
-	        'phone': '123-456-987',
-	        'address': 'my direccion 2'
-		}
-	}
-]
+[  	
+	{  
+		{  
+			'id': '1'  
+			'email': 'myemail1@mail.com',  
+	        'name': 'Juan',  
+	        'lastName': 'perez',  
+		    'docId': 'v-1234456',  
+	        'phone': '123-456-789',  
+	        'address': 'my direccion'  
+		}  
+		{  
+			'id': '2'  
+			'email': 'myemail2@mail.com',  
+	        'name': 'Pedro',  
+	        'lastName': 'Rodriguez',  
+		    'docId': 'v-987653',  
+	        'phone': '123-456-987',  
+	        'address': 'my direccion 2'  
+		}  
+	}  
+]  
 
 ### POST /users
 Recibe como atributos:
-email, password, name, lastName, docId, phone, address, admin (que puede tomar valores 'true' o 'false')
+Atributo | Tipo | Formato  
+email | String | myemail@mail.com
+password | String 
+name | String 
+lastName | String
+docId | String
+phone | String
+address | String
+admin | String | 'true' / 'false'
 
 ### GET /users/:user:id/entry_times
-Retorna
-[	
-	{
-		'id': '1',
-		recordEntry: '07:30:00'
-	}
-	{
-		'id': '2',
-		recordEntry: '07:30:00'
-	}
-
+Retorna  
+[  
+	{  
+		'id': '1',  
+		recordEntry: '07:30:00'  
+	}  
+	{  
+		'id': '2',  
+		recordEntry: '07:30:00'  
+	}  
 ]
 
 ### POST /users/:user:id/entry_times
-Recine como atributos:
-record:Entry
+Recine como atributos:  
+recordEntry
 
 ### GET /users/:user:id/off_times
 ### POST /users/:user:id/off_times
