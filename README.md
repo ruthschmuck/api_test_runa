@@ -65,12 +65,12 @@ Retorna
 Recibe como atributos:  
 Atributo | Tipo | Formato  
 email | String | myemail@mail.com
-password | String 
-name | String 
-lastName | String
-docId | String
-phone | String
-address | String
+password | String |
+name | String |
+lastName | String |
+docId | String |
+phone | String |
+address | String |
 admin | String | 'true' / 'false'
 
 ### GET /users/:user:id/entry_times
