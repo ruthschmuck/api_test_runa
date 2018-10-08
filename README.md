@@ -64,13 +64,13 @@ Retorna
 ### POST /users 
 Atributo | Tipo | Formato
 -- | -- | --
-email | String | myemail@mail.com
-password | String |
-name | String |
-lastName | String |
-docId | String |
-phone | String |
-address | String |
+email | String | 'myemail@mail.com'
+password | String | 'mypassword'
+name | String | 'Pedro'
+lastName | String | 'Perez'
+docId | String | v-12345678
+phone | String | 
+address | String | 'Full address'
 admin | String | 'true' / 'false'
 
 ### GET /users/:user:id/entry_times
