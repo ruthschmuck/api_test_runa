@@ -87,9 +87,25 @@ Retorna
 ]
 
 ### POST /users/:user:id/entry_times
-Recine como atributos:  
-recordEntry
+Atributo | Tipo | Formato
+-- | -- | -- 
+recordEntry | String | '07:30:00'
 
 ### GET /users/:user:id/off_times
+Retorna  
+[  
+	{  
+		'id': '1',  
+		recordEntry: '07:30:00'  
+	}  
+	{  
+		'id': '2',  
+		recordEntry: '07:30:00'  
+	}  
+]
+
 ### POST /users/:user:id/off_times
-Funcionan analogamente a las dos rutas antes descritas 
+Atributo | Tipo | Formato
+-- | -- | -- 
+recordEntry | String | '07:30:00'
+
