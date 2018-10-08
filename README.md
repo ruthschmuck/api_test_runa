@@ -62,7 +62,7 @@ Retorna
 ]  
 
 ### POST /users
-Recibe como atributos:  
+Recibe como atributos:   
 Atributo | Tipo | Formato
 -- | -- | --
 email | String | myemail@mail.com
